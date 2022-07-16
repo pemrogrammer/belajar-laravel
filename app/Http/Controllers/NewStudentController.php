@@ -14,7 +14,7 @@ class NewStudentController extends Controller
      */
     public function index()
     {
-		$new_students = NewStudent::all();
+		$new_students = NewStudent::withTrashed()->get();
 
 		return view('new-student.index', ['new_students' => $new_students]);
     }
@@ -41,28 +41,7 @@ class NewStudentController extends Controller
     {
 		$new_student = new NewStudent;
 
-		$new_student->name = $request->name;
-		$new_student->birth_place = $request->birthPlace;
-		$new_student->birth_date = $request->birthDate;
-		$new_student->citizenship = $request->citizenship;
-		$new_student->religion = $request->religion;
-		$new_student->email = $request->email;
-		$new_student->phone = $request->phone;
-		// $new_student->nik = $request->nik;
-		$new_student->id_no = $request->nik;
-		$new_student->gender = $request->gender;
-		$new_student->mother_name = $request->motherName;
-		$new_student->hobbies_json = json_encode($request->hobby);
-		$new_student->address = $request->address;
-		$new_student->zip = $request->zip;
-		$new_student->prov = $request->province;
-		$new_student->last_edu = $request->lastEdu;
-		$new_student->school_name = $request->schoolName;
-		$new_student->avg_score = $request->avgScore;
-		$new_student->study_program_1 = $request->prodi1;
-		$new_student->study_program_2 = $request->prodi2;
-
-		$new_student->save();
+		$this->saveStudent($new_student, $request);
 
 		return redirect()->route('new-students.index');		
     }
@@ -102,6 +81,28 @@ class NewStudentController extends Controller
     {
 		$new_student = NewStudent::find($id);
 
+		$this->saveStudent($new_student, $request);
+
+		return redirect()->route('new-students.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+		$new_student = NewStudent::find($id);
+
+		$new_student->delete();
+
+		return redirect()->route('new-students.index');
+    }
+
+	private function saveStudent(NewStudent $new_student, $request)
+	{
 		$new_student->name = $request->name;
 		$new_student->birth_place = $request->birthPlace;
 		$new_student->birth_date = $request->birthDate;
@@ -120,22 +121,11 @@ class NewStudentController extends Controller
 		$new_student->last_edu = $request->lastEdu;
 		$new_student->school_name = $request->schoolName;
 		$new_student->avg_score = $request->avgScore;
-		$new_student->study_program_1 = $request->prodi1;
-		$new_student->study_program_2 = $request->prodi2;
+		// $new_student->study_program_1 = $request->prodi1;
+		// $new_student->study_program_2 = $request->prodi2;
+		$new_student->study_program_1_id = $request->prodi1_id;
+		$new_student->study_program_2_id = $request->prodi2_id;
 
-		$new_student->save();
-
-		return redirect()->route('new-students.index');	
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+		return $new_student->save();
+	}
 }

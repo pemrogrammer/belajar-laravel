@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\NewStudentController;
+use App\Models\Department;
+use App\Models\NewStudent;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 

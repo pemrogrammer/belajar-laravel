@@ -25,8 +25,20 @@
 					<td>{{ $new_student->birth_date }}</td>
 					<td>{{ $new_student->birth_place }}</td>
 					<td>
+						@if ($new_student->deleted_at)
+							data telah dihapus
+						@else				
+						
 						<a href="{{ route('new-students.edit', $new_student->id) }}" class="btn btn-primary">Edit</a>
-						<button class="btn btn-secondary">Delete</button>
+
+						<form action="{{ route('new-students.destroy', $new_student->id) }}" method="POST">
+							@csrf
+
+							<input hidden name="_method" value="delete">
+
+							<button class="btn btn-secondary">Delete</button>
+						</form>
+						@endif
 					</td>
 				</tr>
 			@endforeach
