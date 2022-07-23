@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\NewStudentController;
+use App\Models\Campus;
 use App\Models\Department;
 use App\Models\NewStudent;
+use App\Models\StudyProgram;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -162,4 +165,41 @@ Route::get('testing-blade', function ()
 	];
 
 	return view('testing', ['students' => $students]);
+});
+
+
+Route::get('eloquent-relationship', function ()
+{
+  $campuses = Campus::with('departments.study_programs.new_students')->get();
+
+  foreach ($campuses as $campus) {
+    foreach ($campus->departments as $department) {
+      foreach ($department->study_programs as $study_program) {
+        foreach ($study_program->new_students as $new_student) {
+          echo $study_program->name . ' - ' .  $new_student->name  . '<BR>';
+        }
+      }
+    }
+  }
+
+  $var_campusses_2 = DB::table('campuses')
+    ->join('departments', 'campus_id', '=', 'campuses.id')
+    ->join('study_programs', 'department_id', '=', 'departments.id')
+    ->join('new_students', 'study_program_1_id', '=', 'study_programs.id')
+    ->get();
+
+
+  $var_campusses_3 = DB::select(DB::raw('SELECT * FROM campuses
+  INNER JOIN departments ON campus_id = campuses.id
+  INNER JOIN study_programs ON department_id = departments.id
+  INNER JOIN new_students ON study_program_1_id = study_programs.id'));
+
+  // dd($var_campusses_3);
+
+  echo '<BR><BR>';
+  $study_programs = StudyProgram::all();
+
+  foreach ($study_programs as $study_program) {
+    echo $study_program->department->name . ' - ' . $study_program->name . "<BR>";
+  }
 });

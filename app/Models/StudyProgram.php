@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudyProgram extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-	public function new_students()
-    {
-        return $this->hasMany(NewStudent::class, 'study_program_1_id');
-    }
+  public function new_students()
+  {
+    return $this->hasMany(NewStudent::class, 'study_program_1_id');
+  }
+
+  public function department()
+  {
+    return $this->belongsTo(Department::class);
+  }
 }
